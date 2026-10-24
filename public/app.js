@@ -242,7 +242,8 @@ function render() {
 }
 
 function connect() {
-  const es = new EventSource('/events');
+  // Relative so the dashboard also works under a sub-path behind a reverse proxy.
+  const es = new EventSource('events');
   es.onopen = () => {
     connEl.innerHTML = '<span class="live-dot"></span>Live';
     connEl.className = 'conn live';

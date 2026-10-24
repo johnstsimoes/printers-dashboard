@@ -11,6 +11,8 @@ const mqtt = require('mqtt');
 const cloud = require('./cloud');
 
 const PORT = Number(process.env.PORT) || 3000;
+// Set HOST=127.0.0.1 when running behind a reverse proxy so the port isn't exposed directly.
+const HOST = process.env.HOST || '0.0.0.0';
 const DEMO = process.argv.includes('--demo');
 const CONFIG_PATH = path.join(__dirname, 'printers.json');
 const PUBLIC_DIR = path.join(__dirname, 'public');
@@ -442,6 +444,8 @@ const server = http.createServer((req, res) => {
       'Content-Type': 'text/event-stream',
       'Cache-Control': 'no-cache',
       Connection: 'keep-alive',
+      // Stop nginx from buffering the stream.
+      'X-Accel-Buffering': 'no',
     });
     res.write(`data: ${JSON.stringify({ printers: snapshot(), serverTime: Date.now() })}\n\n`);
     clients.add(res);
@@ -502,8 +506,8 @@ async function start() {
 // Re-broadcast periodically so "stale" connection status shows up even without traffic.
 setInterval(scheduleBroadcast, 30000);
 
-server.listen(PORT, () => {
-  console.log(`Dashboard running at http://localhost:${PORT}`);
+server.listen(PORT, HOST, () => {
+  console.log(`Dashboard running at http://${HOST === '0.0.0.0' ? 'localhost' : HOST}:${PORT}`);
 });
 
 start().catch((err) => {
