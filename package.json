@@ -1,0 +1,15 @@
+{
+  "name": "printerfarm-dashboard",
+  "version": "1.0.0",
+  "description": "Local dashboard for a farm of Bambu Lab printers (LAN MQTT)",
+  "main": "server.js",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "login": "node login.js",
+    "demo": "node server.js --demo"
+  },
+  "dependencies": {
+    "mqtt": "5.10.1"
+  }
+}
